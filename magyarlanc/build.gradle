@@ -67,12 +67,20 @@ jar {
         )
     }
 }
-
-task fatJar(type: Jar) {
+// publish to local maven
+// mvn install:install-file
+//      -Dfile=build/libs/magyarlanc-0.1.0-SNAPSHOT-standalone.jar
+//      -DgroupId=hu.u_szeged
+//      -DartifactId=magyarlanc
+//      -Dversion=0.1.0-SNAPSHOT-standalone
+//      -Dpackaging=jar
+task fatJar(type: Jar, dependsOn: [classes, javadoc]) {
     classifier = 'standalone'
     manifest = jar.manifest
     manifest.attributes("Main-Class": mainClassName)
     from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
+    from javadoc.destinationDir
+    from sourceSets.main.allSource
     with jar
 }
 
